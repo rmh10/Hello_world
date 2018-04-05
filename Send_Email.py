@@ -3,9 +3,9 @@ import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
-fromadd = "roymhelms@gmail.com"
-toadd = "roymhelms@gmail.com"
-password = "Mitchell10"
+fromadd = [From Email]
+toadd = [To Email]
+password = [Instert Password]
 
 msg = MIMEMultipart()
 msg['From'] = fromadd
