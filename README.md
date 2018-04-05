@@ -1,6 +1,7 @@
-# Hello_world
-This is my first repository. I am using the guide to get started with GitHub
+# Senior_Design
+**The following repository contains python progams that will be used to create a liquid level, temperature, and pressure monitoring system using a raspberry pi.**
 
-Hey y'all,
+## Company and Research where project took place
 
-I love to learn, and I am excited about learning how to use GitHub. Now I can upload the code that I'm working to GitHub instead of emailing it to my self a billion times.
+**EPRI** *(Electric Power Research Institute)*
+**The University of North Carolina at Charlotte**
