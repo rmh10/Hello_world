@@ -4,4 +4,5 @@
 ## Company and Research where project took place
 
 **EPRI** *(Electric Power Research Institute)*
+
 **The University of North Carolina at Charlotte**
