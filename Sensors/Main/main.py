@@ -12,19 +12,30 @@
 # 2. Taking readings every minute
 # 3. Building a file that will display the time and value of the readings
 # 4. Send and email with the file build attached to it
-# 
+
 
 import os
 import glob
 import time
-import smbus
+#import smbus
 import smtplib
 import email
-import I2C_LCD_driver
-import temperature_sensor_code
-import oil_level_sensor
+#import I2C_LCD_driver
+#import temperature_sensor_code
+#import oil_level_sensor
 
 #from email.MIMEMultipart import MIMEMulitpart
 #from email.MIMEText import MIMEText
 
+print (time.strftime("Time is: %H:%M:%S"))
 
+# 1. Function to take readings from each sensor
+
+
+# 2. Function to output to the LCD
+
+
+# 3. Function to store readings into a file
+def buildFile(level, temperature, pressure)
+	if level = '0':
+		
