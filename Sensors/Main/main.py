@@ -34,14 +34,14 @@ display = I2C_LCD_driver.lcd()
 
 # 1. Function to take readings from each sensor
 def read_sensors():
-	while true:
-		print (time.strftime("Time is: %H:%M:%S"))
-		sleep(2.5)
-		read_level()
-		sleep(2.5)
-		read_temp()
-		sleep(2.5)
-		print("Starting next reading.")
+    while True:
+        display.lcd_display_string(time.strftime("Time is: %H:%M:%S"))
+	sleep(2.5)
+	read_level()
+	sleep(2.5)
+	read_temp()
+	sleep(2.5)
+	print("Starting next reading.")
 	
 # 2. Function to output to the LCD
 
@@ -60,10 +60,4 @@ try:
 except KeyboardInterrupt:
     print "Cleaning"
     display.lcd_display_string("              ")
-    GPIO.cleanup()try:
-    while True:
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(float, GPIO.IN)
-        read_level()
-        GPIO.cleanup()
-
+    GPIO.cleanup()
