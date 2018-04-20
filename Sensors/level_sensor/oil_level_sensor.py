@@ -1,8 +1,8 @@
 from time import sleep
-import RPi.GPIO as GPIO
-import I2C_LCD_driver
+import rpi.gpio as gpio
+import i2c_lcd_driver
 
-led = 22
+led = 16
 float = 18
 
 GPIO.setmode(GPIO.BOARD)
