@@ -19,15 +19,34 @@ import binascii
 
 spi = spidev.SpiDev()
 spi.open(0,0)
-spi.mode=1
+spi.max_speed_hz = 250000
 
+def poll_sensor(channel):
+    assert 0 <= channel <= 1
+    
+    if channel:
+        cbyte = 0b11000000
+    else:
+        cbyte = 0b10000000
+    
+    r = spi.xfer2([1,cbyte,0])
+    return((r[1] & 31) << 6) + (r[2] >> 2)
 try:
-     while True:
-         resp = spi.xfer([0x6000, 0x0000, 0x0000]) # transfer one byte
-         print('Recieved: 0x{0}'.format(binascii.hexlify(bytearray(resp))))
-         sleep(1) # sleep for 0.1 seconds
-            #end while
+    while True:
+        channel = 0
+        channeldata = poll_sensor(channel)
+
+        voltage = round(((channeldata * 4500) / 1024),0)
+        pressure = round((voltage/4500)*450)
+        print('Pressure    : {}'.format(pressure))
+        print('Voltage (mV): {}'.format(voltage))
+        print('Data        : {}/n'.format(channeldata))
+        sleep(2) # sleep for 0.1 seconds
+
+        #print('Recieved: 0x{0}'.format(binascii.hexlify(bytearray(resp))))
+
 #except KeyboardInterrupt: # Ctrl+C pressed, so…
 finally:
     spi.close() # … close the port before exit
-     #end try
+    print "/n All cleaned up."
+    #end try
