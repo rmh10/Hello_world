@@ -4,9 +4,9 @@ import os
 import sys
 from time import sleep
 #import rpi.gpio as gpio
-#import i2c_lcd_driver
 import spidev
 import binascii
+import I2C_LCD_driver
 
 #CE0  = 24
 #MOSI = 19
@@ -16,6 +16,8 @@ import binascii
 #RPI.GPIO
 #GPIO.setmode(GPIO.BOARD)
 #GPIO.setup(CS, GPIO.OUT)
+
+display = I2C_LCD_driver.lcd()
 
 spi = spidev.SpiDev()
 spi.open(0,0)
@@ -38,8 +40,9 @@ try:
 
         voltage = round(((channeldata * 4500) / 1024),0)
         pressure = round((voltage/4500)*450)
+	display.lcd_display_string('Pressure: %s Psi' %outMsg)
         print('Pressure    : {}'.format(pressure))
-        print('Voltage (mV): {}'.format(voltage))
+        print('Voltage (V) : {}'.format(voltage))
         print('Data        : {}/n'.format(channeldata))
         sleep(2) # sleep for 0.1 seconds
 
