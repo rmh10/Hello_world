@@ -54,9 +54,7 @@ GPIO.setup(float, GPIO.IN)
 #### 1. Function to take readings from each sensor
 
 def read__optical_level():
-    if GPIO.input(optical) == 1:
-        outMsg_optical = "Oil level = HIGH"
-    elsif GPIO.input(optical) == 0:
+    elif GPIO.input(optical) == 0:
         while GPIO.input(optical) == 0:
             outMsg_optical = "Oil level = LOW"
             send_email_vital(important)
@@ -68,13 +66,14 @@ def read__optical_level():
 def read_float_level(): 
     if GPIO.input(float) == 0:
         outMSG_float = "Oil level = HIGH"
-    elsif GPIO.input(float) == 1:
+    elif GPIO.input(float) == 1:
         while GPIO.input(float) == 1:
             outMsg_float = "Oil level = LOW"
             send_email_vital(important)
             time.sleep(10)
             display.lcd.display.string(outMsg_float)
     display.lcd.display.string(outMsg_float)
+
 
 def read_temp():
     f = open(device_file, 'r')
