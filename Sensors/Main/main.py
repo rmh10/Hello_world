@@ -51,6 +51,14 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(optical, GPIO.IN)
 GPIO.setup(float, GPIO.IN)
 
+fromadd = "From Address"
+toadd = "To Address"
+msg = MIMEMultipart()
+msg['From'] = fromadd
+msg['To'] = toadd
+msg['Subject'] = "Oil level is too HIGH"
+
+
 #### 1. Function to take readings from each sensor
 
 def read__optical_level():
@@ -122,12 +130,72 @@ def read_sensors():
         display.lcd_display_string("Pressure(Psi): %s" %pressure)
         sleep(2.5)
 	
-# 2. Function to output to the LCD
+# 2. Function to send emails
+def choose_msg(message)
+    message = getMsg()
+    if (message == "Level High"):
+        subject = "Oil level is too HIGH"
+        body = ("Time: %s\n\nOil level is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))
+  
+    elif (message == "Level Low"):
+        subject = "Oil level is too HIGH"  
+        body = ("Time: %s\n\nOil level is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S"))  
+    
+    elif (message == "Temp High"):
+        subject = "Temperture is too HIGH"
+        body = ("Time: %s\n\nTemperature is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))
+    
+    elif (message == "Temp Low"):
+        subject = "Temperture is too LOW"
+        body = ("Time: %s\n\nTemperature is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S")) 
+    
+    elif (message == "Pres High"): 
+        subject = "Pressure is too HIGH"
+        body = ("Time: %s\n\nPressure is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))   
+    
+    elif (message == "Pres Low"): 
+        subject = "Pressure is too LOW"
+        body = ("Time: %s\n\nPressure is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S"))  
+
+    else:
+        subject = "Emergency message"
+        body = "Incorrect message received from "getMsg()" function in main.py"
+   return(subject, body) 
+
+def getMsg(choice):
+    if (choice == "LH"):
+        msg = "Level High"
+    elif (choice == "LL"):
+        msg = "Level Low"
+    elif (choice == "TH"):
+        msg = "Temp High"
+    elif (choice == "TL")
+        msg = "Temp Low"
+    elif (choice == "PH")
+        msg = "Pres High"
+    elif (choice == "PL")
+        msg = "Pres Low"
+    else:
+        msg = "No message"
+    return msg
+
+def send_emails():
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    server.ehlo()
+    server.login(fromadd, password)
+    text = msg.as_string()
+    server.sendmail(fromadd, toadd, text)
+    server.quit() 
 
 
 # 3. Function to store readings into a file
 #def buildFile(level, temperature, pressure)
 
+
+msg = MIMEMultipart()
+msg['From'] = fromadd
+msg['To'] = toadd
+msg['Subject'] = 
 
 try:
     while True:

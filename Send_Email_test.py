@@ -5,33 +5,32 @@ from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
 from email import encoders
 
-fromadd = "From Address" 
+fromadd = "From Address"
 toadd = "To Address"
 password = "Pasword"
 
-msg = MIMEMultipart()
-msg['From'] = fromadd
-msg['To'] = toadd
-msg['Subject'] = "Test Email using Python"
+def send():  
+    msg = MIMEMultipart()
+    msg['From'] = fromadd
+    msg['To'] = toadd
+    msg['Subject'] = "Test Email using Python"
+  
+    body = "Hey! This email was sent from your terminal\n"
+    
+    important = "The Oil in the transfromer is low\nSend assistance now!\n"
+    msg.attach(MIMEText(important, 'plain'))
+    
+    filename = "ADC_program.py"
+    attachment = open("Sensors/pressure_sensor/pressure_sensor.py","rb")
+     
+    part = MIMEBase('application', 'octet-stream')
+    part.set_payload((attachment).read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', "attachment; filename= %s" %filename)
 
-body = "Hey! This email was sent from your terminal\n"
+    msg.attach(part)
 
-important = "The Oil in the transfromer is low\nSend assistance now!\n" 
-msg.attach(MIMEText(important, 'plain'))
-
-filename = "ADC_program.py"
-attachment = open("Sensors/pressure_sensor/pressure_sensor.py","rb")
-
-part = MIMEBase('application', 'octet-stream')
-part.set_payload((attachment).read())
-encoders.encode_base64(part)
-part.add_header('Content-Disposition', "attachment; filename= %s" %filename)
-
-msg.attach(part)
-
-def send():
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    server.ehlo()
     server.login(fromadd, password)
     text = msg.as_string()
     server.sendmail(fromadd, toadd, text)
@@ -53,7 +52,8 @@ try:
     #text = msg.as_string()
     #server.sendmail(fromadd, toadd, text)
     #server.quit()
-    sendIfTrue()
+    #sendIfTrue()
+    send()
     print ("Successfully sent your email!\n")
 
 except:
