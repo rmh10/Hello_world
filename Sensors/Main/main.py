@@ -53,19 +53,16 @@ GPIO.setup(float, GPIO.IN)
 
 fromadd = "From Address"
 toadd = "To Address"
-msg = MIMEMultipart()
-msg['From'] = fromadd
-msg['To'] = toadd
-msg['Subject'] = "Oil level is too HIGH"
 
 
-#### 1. Function to take readings from each sensor
+#### 1. Function to take readings from each sensor ####
 
-def read__optical_level():
+def read_optical_level():
     elif GPIO.input(optical) == 0:
         while GPIO.input(optical) == 0:
             outMsg_optical = "Oil level = LOW"
-            send_email_vital(important)
+            email_sub, email_bod = choose_msg("LL")
+            send_email_vital()
             time.sleep(10)
             display.lcd_display_string(outMsg_optical)
     display.lcd_display_string(outMsg_optical)
@@ -128,11 +125,15 @@ def read_sensors():
         voltage = round(((adcData * 4500) / 1024),0)
         pressure = round((voltage / 4500) *450) 
         display.lcd_display_string("Pressure(Psi): %s" %pressure)
+        
+        if (pressure < 20)
+            choose_msg("PH")
         sleep(2.5)
 	
-# 2. Function to send emails
+#### 2. Function to send emails ####
+
 def choose_msg(message)
-    message = getMsg()
+    #message = getMsg(choose_in)
     if (message == "Level High"):
         subject = "Oil level is too HIGH"
         body = ("Time: %s\n\nOil level is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))
@@ -188,7 +189,7 @@ def send_emails():
     server.quit() 
 
 
-# 3. Function to store readings into a file
+#### 3. Function to store readings into a file ####
 #def buildFile(level, temperature, pressure)
 
 
