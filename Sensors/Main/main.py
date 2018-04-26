@@ -27,6 +27,7 @@ import I2C_LCD_driver
 import temperature_sensor_code
 import oil_level_sensor
 from time import sleep
+from Send_Email_test import send
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -53,7 +54,7 @@ GPIO.setup(float, GPIO.IN)
 
 fromadd = "From Address"
 toadd = "To Address"
-
+password = "Password"
 
 #### 1. Function to take readings from each sensor ####
 
@@ -62,7 +63,8 @@ def read_optical_level():
         while GPIO.input(optical) == 0:
             outMsg_optical = "Oil level = LOW"
             email_sub, email_bod = choose_msg("LL")
-            send_email_vital()
+            msg_LL = "LL"
+            choose_msg(msg_LL)
             time.sleep(10)
             display.lcd_display_string(outMsg_optical)
     display.lcd_display_string(outMsg_optical)
@@ -74,7 +76,8 @@ def read_float_level():
     elif GPIO.input(float) == 1:
         while GPIO.input(float) == 1:
             outMsg_float = "Oil level = LOW"
-            send_email_vital(important)
+            msg_LL = "LL"
+            choose_msg(msg_LL)
             time.sleep(10)
             display.lcd.display.string(outMsg_float)
     display.lcd.display.string(outMsg_float)
@@ -91,6 +94,13 @@ def read_temp():
         temp_string = lines[1][equals_pos+2:]
         temp_c = float(temp_string) / 1000.0
         temp_f = temp_c * 9.0 / 5.0 + 32.0
+	
+        if (temp_f < 32.0):
+            msg_TL = "TL"
+            choose_msg(msg_TL)
+        elsif (temp_f > 120.0):
+            msg_TH = "TH"
+            choose_msg(msg_TH)
         display.lcd_display_string("Temp(F): %s" %temp_f)
         time.sleep(2.5)
  	display.lcd_display_string("Temp(C): %s" %temp_c)
@@ -110,8 +120,6 @@ def read_pres(adc):
 
 def read_sensors():
     #while True:
-        adc = 0
-        
         display.lcd_display_string(time.strftime("Time: %H:%M:%S"))
 	sleep(2.5)
 	
@@ -120,65 +128,54 @@ def read_sensors():
          	
         read_temp()
 	sleep(2.5)
-        
+       
+        adc = 0 
         adcData = read_pres(adc) 
         voltage = round(((adcData * 4500) / 1024),0)
-        pressure = round((voltage / 4500) *450) 
+        pressure = round((voltage / 4500) *250) 
         display.lcd_display_string("Pressure(Psi): %s" %pressure)
         
         if (pressure < 20)
-            choose_msg("PH")
+            msg_PL = "PL"
+            choose_msg(msg_PL)
+        elsif (pressure > 100)
+            msg_PH = "PH"
+            choose_msg(msg_PH)
         sleep(2.5)
 	
 #### 2. Function to send emails ####
 
 def choose_msg(message)
     #message = getMsg(choose_in)
-    if (message == "Level High"):
+    if (message == "LH"):
         subject = "Oil level is too HIGH"
         body = ("Time: %s\n\nOil level is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))
   
-    elif (message == "Level Low"):
+    elif (message == "LL"):
         subject = "Oil level is too HIGH"  
         body = ("Time: %s\n\nOil level is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S"))  
     
-    elif (message == "Temp High"):
+    elif (message == "TH"):
         subject = "Temperture is too HIGH"
         body = ("Time: %s\n\nTemperature is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))
     
-    elif (message == "Temp Low"):
+    elif (message == "TL"):
         subject = "Temperture is too LOW"
         body = ("Time: %s\n\nTemperature is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S")) 
     
-    elif (message == "Pres High"): 
+    elif (message == "PH"): 
         subject = "Pressure is too HIGH"
         body = ("Time: %s\n\nPressure is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))   
     
-    elif (message == "Pres Low"): 
+    elif (message == "PL"): 
         subject = "Pressure is too LOW"
         body = ("Time: %s\n\nPressure is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S"))  
 
     else:
         subject = "Emergency message"
-        body = "Incorrect message received from "getMsg()" function in main.py"
-   return(subject, body) 
-
-def getMsg(choice):
-    if (choice == "LH"):
-        msg = "Level High"
-    elif (choice == "LL"):
-        msg = "Level Low"
-    elif (choice == "TH"):
-        msg = "Temp High"
-    elif (choice == "TL")
-        msg = "Temp Low"
-    elif (choice == "PH")
-        msg = "Pres High"
-    elif (choice == "PL")
-        msg = "Pres Low"
-    else:
-        msg = "No message"
-    return msg
+        body = "Incorrect message received from "choose_msg()" function in main.py"
+    send(subject, body) 
+    
 
 def send_emails():
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
@@ -192,11 +189,6 @@ def send_emails():
 #### 3. Function to store readings into a file ####
 #def buildFile(level, temperature, pressure)
 
-
-msg = MIMEMultipart()
-msg['From'] = fromadd
-msg['To'] = toadd
-msg['Subject'] = 
 
 try:
     while True:

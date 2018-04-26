@@ -9,16 +9,13 @@ fromadd = "From Address"
 toadd = "To Address"
 password = "Pasword"
 
-def send():  
+def send(subject, body):  
     msg = MIMEMultipart()
     msg['From'] = fromadd
     msg['To'] = toadd
-    msg['Subject'] = "Test Email using Python"
+    msg['Subject'] = subject
   
-    body = "Hey! This email was sent from your terminal\n"
-    
-    important = "The Oil in the transfromer is low\nSend assistance now!\n"
-    msg.attach(MIMEText(important, 'plain'))
+    msg.attach(MIMEText(body, 'plain'))
     
     filename = "ADC_program.py"
     attachment = open("Sensors/pressure_sensor/pressure_sensor.py","rb")
@@ -45,7 +42,7 @@ def sendIfTrue():
             send()
         print("Iteration= %i" %i)
 
-try:
+#try:
     #server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     #server.ehlo()
     #server.login(fromadd, password)
@@ -53,8 +50,8 @@ try:
     #server.sendmail(fromadd, toadd, text)
     #server.quit()
     #sendIfTrue()
-    send()
-    print ("Successfully sent your email!\n")
+    #send()
+    #print ("Successfully sent your email!\n")
 
-except:
-    print("Sending did not complete")
+#except:
+    #print("Sending did not complete")

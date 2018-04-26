@@ -29,7 +29,7 @@ part.add_header('Content-Disposition', "attachment; filename= %s" %filename)
 
 msg.attach(part)
 
-def send():
+def send_1():
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     server.ehlo()
     server.login(fromadd, password)
@@ -38,13 +38,14 @@ def send():
     server.quit()
 
 def sendIfTrue():
-    for i in range(0,10): 
-        if (i%2 == 0):
-            outMsg = "Oil level = HIGH"
-        else:
-            outMsg = "Oil level = LOW"
-            send()
-        print("Iteration= %i" %i)
+    #for i in range(0,10): 
+     i = raw_input("Input 0 for Oil High and input any other number for Oil Low\n")
+     if (i == 0):
+         outMsg = "Oil level = HIGH"
+     else:
+         outMsg = "Oil level = LOW"
+         send()
+     print("Iteration= %i" %i)
 
 try:
     #server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
