@@ -1,7 +1,7 @@
 # File Name: main.py
 # Author: Roy Helms
 # Date Created: 04/12/2018
-# Date Last Modified: 4/12/2018
+# Date Last Modified: 4/24/2018
 # Python Version: 2.7 
 #
 # Description:
@@ -19,34 +19,174 @@ import glob
 import time
 #import smbus
 import smtplib
+import spidev
+import binascii
 import email
+import rpi.gpio as gpio
 import I2C_LCD_driver
 import temperature_sensor_code
 import oil_level_sensor
 from time import sleep
+from Send_Email_test import send
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+from email.MIMEBase import MIMEBase
+from email import encoders
+
+os.system('modprobe w1-gpio')
+os.system('modprobe w1-therm')
+ 
+base_dir = '/sys/bus/w1/devices/'
+device_folder = glob.glob(base_dir + '28*')[0]
+device_file = device_folder + '/w1_slave'
+
+spi = spidev.SpiDev()
+spi.open(0,0)
+spi.max_speed_hz = 250000
 
 display = I2C_LCD_driver.lcd()
 
-#from email.MIMEMultipart import MIMEMulitpart
-#from email.MIMEText import MIMEText
+optical = 16
+float = 18
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(optical, GPIO.IN)
+GPIO.setup(float, GPIO.IN)
 
-#print (time.strftime("Time is: %H:%M:%S"))
+fromadd = "From Address"
+toadd = "To Address"
+password = "Password"
 
-# 1. Function to take readings from each sensor
-def read_sensors():
-    while True:
-        display.lcd_display_string(time.strftime("Time is: %H:%M:%S"))
-	sleep(2.5)
-	read_level()
-	sleep(2.5)
-	read_temp()
-	sleep(2.5)
-	print("Starting next reading.")
+#### 1. Function to take readings from each sensor ####
+
+def read_optical_level():
+    elif GPIO.input(optical) == 0:
+        while GPIO.input(optical) == 0:
+            outMsg_optical = "Oil level = LOW"
+            email_sub, email_bod = choose_msg("LL")
+            msg_LL = "LL"
+            choose_msg(msg_LL)
+            time.sleep(10)
+            display.lcd_display_string(outMsg_optical)
+    display.lcd_display_string(outMsg_optical)
+
+
+def read_float_level(): 
+    if GPIO.input(float) == 0:
+        outMSG_float = "Oil level = HIGH"
+    elif GPIO.input(float) == 1:
+        while GPIO.input(float) == 1:
+            outMsg_float = "Oil level = LOW"
+            msg_LL = "LL"
+            choose_msg(msg_LL)
+            time.sleep(10)
+            display.lcd.display.string(outMsg_float)
+    display.lcd.display.string(outMsg_float)
+
+
+def read_temp():
+    f = open(device_file, 'r')
+    lines = f.readlines()
+    f.close()
+    if lines[0].strip90[-3:] != 'YES':
+        time.sleep(0.2)
+    equals_pos = lines[1].find('t=')
+    if equals_pos != -1:
+        temp_string = lines[1][equals_pos+2:]
+        temp_c = float(temp_string) / 1000.0
+        temp_f = temp_c * 9.0 / 5.0 + 32.0
 	
-# 2. Function to output to the LCD
+        if (temp_f < 32.0):
+            msg_TL = "TL"
+            choose_msg(msg_TL)
+        elsif (temp_f > 120.0):
+            msg_TH = "TH"
+            choose_msg(msg_TH)
+        display.lcd_display_string("Temp(F): %s" %temp_f)
+        time.sleep(2.5)
+ 	display.lcd_display_string("Temp(C): %s" %temp_c)
 
 
-# 3. Function to store readings into a file
+def read_pres(adc):
+    assert 0 <= adc <= 1
+    
+    if adc:
+        cbyte = 0b11000000
+    else:
+        cbyte = 0b10000000
+
+    resp = spi.xfer2([1,cbyte,0])
+    return((r[1] & 31) << 6) + (r[2] >> 2)
+
+
+def read_sensors():
+    #while True:
+        display.lcd_display_string(time.strftime("Time: %H:%M:%S"))
+	sleep(2.5)
+	
+        read_level()
+	sleep(2.5)
+         	
+        read_temp()
+	sleep(2.5)
+       
+        adc = 0 
+        adcData = read_pres(adc) 
+        voltage = round(((adcData * 4500) / 1024),0)
+        pressure = round((voltage / 4500) *250) 
+        display.lcd_display_string("Pressure(Psi): %s" %pressure)
+        
+        if (pressure < 20)
+            msg_PL = "PL"
+            choose_msg(msg_PL)
+        elsif (pressure > 100)
+            msg_PH = "PH"
+            choose_msg(msg_PH)
+        sleep(2.5)
+	
+#### 2. Function to send emails ####
+
+def choose_msg(message)
+    #message = getMsg(choose_in)
+    if (message == "LH"):
+        subject = "Oil level is too HIGH"
+        body = ("Time: %s\n\nOil level is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))
+  
+    elif (message == "LL"):
+        subject = "Oil level is too HIGH"  
+        body = ("Time: %s\n\nOil level is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S"))  
+    
+    elif (message == "TH"):
+        subject = "Temperture is too HIGH"
+        body = ("Time: %s\n\nTemperature is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))
+    
+    elif (message == "TL"):
+        subject = "Temperture is too LOW"
+        body = ("Time: %s\n\nTemperature is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S")) 
+    
+    elif (message == "PH"): 
+        subject = "Pressure is too HIGH"
+        body = ("Time: %s\n\nPressure is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))   
+    
+    elif (message == "PL"): 
+        subject = "Pressure is too LOW"
+        body = ("Time: %s\n\nPressure is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S"))  
+
+    else:
+        subject = "Emergency message"
+        body = "Incorrect message received from "choose_msg()" function in main.py"
+    send(subject, body) 
+    
+
+def send_emails():
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    server.ehlo()
+    server.login(fromadd, password)
+    text = msg.as_string()
+    server.sendmail(fromadd, toadd, text)
+    server.quit() 
+
+
+#### 3. Function to store readings into a file ####
 #def buildFile(level, temperature, pressure)
 
 
