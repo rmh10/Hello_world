@@ -39,12 +39,12 @@ try:
         channeldata = poll_sensor(channel)
 
         voltage = round(((channeldata * 4500) / 1024),0)
-        pressure = round((voltage/4500)*450)
+        pressure = round(((voltage/4500)*450)-44)
 	display.lcd_display_string('Pressure: %s Psi' %outMsg)
         print('Pressure    : {}'.format(pressure))
         print('Voltage (V) : {}'.format(voltage))
         print('Data        : {}/n'.format(channeldata))
-        sleep(2) # sleep for 0.1 seconds
+        sleep(0.1) # sleep for 0.1 seconds
 
         #print('Recieved: 0x{0}'.format(binascii.hexlify(bytearray(resp))))
 
