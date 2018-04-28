@@ -208,7 +208,7 @@ def send_emails(sub, bod):
     
     msg.attach(MIMEText(bod, 'plain'))
 
-    filename = "sensor_info.pdf"
+    filename = "sensor_info.txt"
     attachment = open("sensor_info.txt", "rb")
      
     part = MIMEBase('application', 'octet_stream')
