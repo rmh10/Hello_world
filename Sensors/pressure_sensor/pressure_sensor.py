@@ -39,7 +39,7 @@ try:
         channeldata = poll_sensor(channel)
 
         voltage = round(((channeldata * 5000) / 1024),3)
-        pressure = round(((250/4000) * voltage) - (250/8000) + 5.3)
+        pressure = round(((250/4000) * voltage) - (250/8000))
         display.lcd_display_string('Pres: %sPsi   ' %pressure)
         print('Pressure    : {}'.format(pressure))
         print('Voltage (V) : {}'.format(voltage))
