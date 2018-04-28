@@ -1,6 +1,6 @@
 from time import sleep
-import rpi.gpio as gpio
-import i2c_lcd_driver
+import RPi.GPIO as GPIO 
+#import I2C_LCD_driver
 
 led = 16
 float = 18
@@ -9,7 +9,7 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(float, GPIO.IN)
 #GPIO.setup(led,GPIO.OUT)
 
-display = I2C_LCD_driver.lcd()
+#display = I2C_LCD_driver.lcd()
 
 def writedisp():
     sleep (1)
@@ -22,7 +22,7 @@ def writedisp():
 	    #GPIO.output(led, True)
             outMsg = "Oil level=HIGH"
     print outMsg
-    display.lcd_display_string(outMsg)
+    #display.lcd_display_string(outMsg)
 
 try:
     while True:

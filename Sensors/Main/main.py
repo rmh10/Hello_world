@@ -13,7 +13,7 @@
 # 3. Building a file that will display the time and value of the readings
 # 4. Send and email with the file build attached to it
 
-
+#!/usr/bin/python
 import os
 import glob
 import time
@@ -22,7 +22,7 @@ import smtplib
 import spidev
 import binascii
 import email
-import rpi.gpio as gpio
+import RPi.GPIO as GPIO 
 import I2C_LCD_driver
 import temperature_sensor_code
 import oil_level_sensor
@@ -59,6 +59,8 @@ password = "Password"
 #### 1. Function to take readings from each sensor ####
 
 def read_optical_level():
+    if GPIO.input(optical) == 0:
+        outMsg_optical = "Oil level = HIGH"
     elif GPIO.input(optical) == 0:
         while GPIO.input(optical) == 0:
             outMsg_optical = "Oil level = LOW"
@@ -98,7 +100,7 @@ def read_temp():
         if (temp_f < 32.0):
             msg_TL = "TL"
             choose_msg(msg_TL)
-        elsif (temp_f > 120.0):
+        elif (temp_f > 120.0):
             msg_TH = "TH"
             choose_msg(msg_TH)
         display.lcd_display_string("Temp(F): %s" %temp_f)
@@ -135,17 +137,17 @@ def read_sensors():
         pressure = round((voltage / 4500) *250) 
         display.lcd_display_string("Pressure(Psi): %s" %pressure)
         
-        if (pressure < 20)
+        if (pressure < 20):
             msg_PL = "PL"
             choose_msg(msg_PL)
-        elsif (pressure > 100)
+        elif (pressure > 100):
             msg_PH = "PH"
             choose_msg(msg_PH)
         sleep(2.5)
 	
 #### 2. Function to send emails ####
 
-def choose_msg(message)
+def choose_msg(message):
     #message = getMsg(choose_in)
     if (message == "LH"):
         subject = "Oil level is too HIGH"
@@ -173,7 +175,7 @@ def choose_msg(message)
 
     else:
         subject = "Emergency message"
-        body = "Incorrect message received from "choose_msg()" function in main.py"
+        body = "Incorrect message received from 'choose_msg()' function in main.py"
     send(subject, body) 
     
 
