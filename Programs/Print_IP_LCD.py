@@ -3,13 +3,15 @@
 #import struct
 import subprocess
 import I2C_LCD_driver
+import time
+
 cmd = "hostname -I | cut -d\' \' -f1"
 IP = subprocess.check_output(cmd, shell = True )
 print str(IP)
 
 display = I2C_LCD_driver.lcd()
 display.lcd_display_string(IP)
-
+time.sleep(10)
 #def get_ip_address(ifname):
     #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     #return socket.inet_ntoa(fcntl.ioctl(
