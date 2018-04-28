@@ -1,10 +1,21 @@
 This file contains the sensor information from 04 28, 2018
 
-Time= 16:15:14
+Time= 16:38:29
 Op level = LOW     
 Fl level = HIGH     
-Temp(F)= 71.94
+Temp(F)= 72.05
 Pres(Psi)= 0.00
 
-Time= 16:15:28
+Time= 16:38:43
 Op level = LOW     
+Fl level = HIGH     
+Temp(F)= 72.16
+Pres(Psi)= 0.00
+
+Time= 16:38:57
+Op level = LOW     
+Fl level = HIGH     
+Temp(F)= 72.16
+Pres(Psi)= 0.00
+
+Time= 16:39:11

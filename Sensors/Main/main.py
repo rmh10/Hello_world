@@ -11,24 +11,20 @@
 # 1. Taking readings of oil level, pressure, and temperature
 # 2. Taking readings every minute
 # 3. Building a file that will display the time and value of the readings
-# 4. Send and email with the file build attached to it
+# 4. Send and email with the file built attached to it
 
 #!/usr/bin/python
 import os
 import glob
 import time
 import datetime
-#import smbus
 import smtplib
 import spidev
 import binascii
 import email
 import RPi.GPIO as GPIO 
 import I2C_LCD_driver
-#import temperature_sensor_code
-#import oil_level_sensor
 from time import sleep
-#from Send_Email_test import send
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -64,12 +60,9 @@ def read_optical_level():
     if GPIO.input(optical) == 0:
         outMsg_optical = "Op level = HIGH     "
     if GPIO.input(optical) == 1:
-        #while GPIO.input(optical) == 0:
         outMsg_optical = "Op level = LOW     "
         msg_LL = "LL"
         choose_msg(msg_LL)
-            #time.sleep(10)
-            #display.lcd_display_string(outMsg_optical)
 
     info = open("sensor_info.txt", 'a')
     info.write(outMsg_optical + "\n")
@@ -83,12 +76,9 @@ def read_float_level():
     if GPIO.input(f_switch) == 0:
         outMsg_float = "Fl level = HIGH     "
     if GPIO.input(f_switch) == 1:
-        #while GPIO.input(f_switch) == 1:
         outMsg_float = "Fl level = LOW     "
         msg_LL = "LL"
         choose_msg(msg_LL)
-            #time.sleep(10)
-            #display.lcd.display.string(outMsg_float)
     
     info = open("sensor_info.txt", 'a')
     info.write(outMsg_float + "\n")
@@ -120,8 +110,8 @@ def read_temp():
         msg_TH = "TH"
         choose_msg(msg_TH)
     display.lcd_display_string("Temp(F): %.2f     " %temp_f)
-        #time.sleep(2.5)
- 	#display.lcd_display_string("Temp(C): %s" %temp_c)
+    #time.sleep(2.5)
+    #display.lcd_display_string("Temp(C): %.2f" %temp_c)
 
 
 def read_pres(adc):
@@ -180,7 +170,6 @@ def read_sensors():
 #### 2. Function to send emails ####
 
 def choose_msg(message):
-    #message = getMsg(choose_in)
     if (message == "LH"):
         subject = "Oil level is too HIGH"
         body = ("Time: %s\n\nOil level is too HIGH. Assistance is needed!" %time.strftime("%H:%M:%S"))
@@ -238,18 +227,16 @@ def send_emails(sub, bod):
 
 
 #### 3. Function to store readings into a file ####
-#def buildFile(level, temperature, pressure)
 
 
 try:
-    #while True:
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(optical, GPIO.IN)
-        GPIO.setup(f_switch, GPIO.IN)
-        read_sensors()
-	#GPIO.cleanup()
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(optical, GPIO.IN)
+    GPIO.setup(f_switch, GPIO.IN)
+    read_sensors()
+    #GPIO.cleanup()
 
 except KeyboardInterrupt:
     print "Cleaning"
-    display.lcd_display_string("              ")
+    display.lcd_clear()
     GPIO.cleanup()
