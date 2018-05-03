@@ -205,7 +205,7 @@ def choose_msg(message):
         subject = "Pressure is too LOW"
         body = ("Time: %s\n\nPressure is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S"))  
 
-    elif (message == "Time")
+    elif (message == "Time"):
         subject = "Reading taken without Emergency Message"
         body = ("Time: %s\n\nThis is a file containing the readings from 50 iterations." %time.strftime("%H:%M:%S"))
     else:
