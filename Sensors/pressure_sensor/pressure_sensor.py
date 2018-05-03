@@ -4,9 +4,10 @@ import os
 import sys
 from time import sleep
 #import rpi.gpio as gpio
-import spidev
+#import spidev
 import binascii
 import I2C_LCD_driver
+import ad7705
 
 #CE0  = 24
 #MOSI = 19
@@ -19,9 +20,9 @@ import I2C_LCD_driver
 
 display = I2C_LCD_driver.lcd()
 
-spi = spidev.SpiDev()
-spi.open(0,0)
-spi.max_speed_hz = 250000
+#spi = spidev.SpiDev()
+#spi.open(0,0)
+#spi.max_speed_hz = 50000
 
 def poll_sensor(channel):
     assert 0 <= channel <= 1
@@ -30,17 +31,23 @@ def poll_sensor(channel):
         cbyte = 0b11000000
     else:
         cbyte = 0b10000000
-    
+
     r = spi.xfer2([1,cbyte,0])
     return((r[1] & 31) << 6) + (r[2] >> 2)
+
 try:
     while True:
+        adc = ad7705.AD770X()
         channel = 0
-        channeldata = poll_sensor(channel)
+        adc.initChannel(channel)
+        #channeldata = poll_sensor(channel)
+        channeldata = adc.readADResultRaw(channel) 
 
-        voltage = round(((channeldata * 5000) / 1024),3)
-        pressure = round(((250/4000) * voltage) - (250/8000))
-        display.lcd_display_string('Pres: %sPsi   ' %pressure)
+        #voltage = round(((channeldata * 5000) / 1024),3)
+        #pressure = round(((250/4000) * voltage) - (250/8000),2)
+        voltage = adc.readVoltage(channel, 5)
+        pressure = round(((250/4) * voltage) - (250/8),2)
+        display.lcd_display_string('Pres: %.2fPsi   ' %pressure)
         print('Pressure    : {}'.format(pressure))
         print('Voltage (V) : {}'.format(voltage))
         print('Data        : {}/n'.format(channeldata))
@@ -50,6 +57,6 @@ try:
 
 #except KeyboardInterrupt: # Ctrl+C pressed, so…
 finally:
-    spi.close() # … close the port before exit
+    #spi.close() # … close the port before exit
     print "/n All cleaned up."
     #end try

@@ -138,43 +138,46 @@ def read_sensors():
     start_info.write(today.strftime("This file contains the sensor information from %m %d, %Y\n"))
     start_info.close() 
     while True:
-        display.lcd_display_string(time.strftime("Time= %H:%M:%S     "), 1, 0)
-        display.lcd_display_string(today.strftime("Date= %m/%d/%Y     "), 2, 0)
+        for i in range(0,50):
+            display.lcd_display_string(time.strftime("Time= %H:%M:%S     "), 1, 0)
+            display.lcd_display_string(today.strftime("Date= %m/%d/%Y     "), 2, 0)
 
-        info = open("sensor_info.txt", 'a')
-        info.write(time.strftime("\nTime= %H:%M:%S\n"))
-        info.close()
-	sleep(2.5)
+            info = open("sensor_info.txt", 'a')
+            info.write(time.strftime("\nTime= %H:%M:%S\n"))
+            info.close()
+	    sleep(2.5)
 
-        display.lcd_clear()	
-        read_optical_level()
-        sleep(2.5)
-        read_float_level()
-        sleep(1.25)
+            display.lcd_clear()	
+            read_optical_level()
+            sleep(2.5)
+            read_float_level()
+            sleep(1.25)
          	
-        read_temp()
-	sleep(2.5)
+            read_temp()
+	    sleep(2.5)
        
-        #adc = 0 
-        #adcData = read_pres(adc) 
-        #voltage = round(((adcData * 5000) / 1024),0)
-        #pressure = round(((250/4000) * voltage) - (250/8000))
-        voltage = adc.readVoltage(0, 5)
-        pressure = round(((250/4) * voltage) - (250/8),2)
-        display.lcd_display_string("Pres(Psi): %.2f     " %pressure)
+            #adc = 0 
+            #adcData = read_pres(adc) 
+            #voltage = round(((adcData * 5000) / 1024),0)
+            #pressure = round(((250/4000) * voltage) - (250/8000))
+            voltage = adc.readVoltage(0, 5)
+            pressure = round(((250/4) * voltage) - (250/8),2)
+            display.lcd_display_string("Pres(Psi): %.2f     " %pressure)
 
-        info = open("sensor_info.txt", 'a')
-        info.write("Pres(Psi)= %.2f\n" %pressure)
-        info.close()
+            info = open("sensor_info.txt", 'a')
+            info.write("Pres(Psi)= %.2f\n" %pressure)
+            info.close()
         
-        if (pressure < -10):
-            msg_PL = "PL"
-            choose_msg(msg_PL)
-        elif (pressure > 50):
-            msg_PH = "PH"
-            choose_msg(msg_PH)
-        sleep(2.5)
-	
+            if (pressure < -10):
+                msg_PL = "PL"
+                choose_msg(msg_PL)
+            elif (pressure > 50):
+                msg_PH = "PH"
+                choose_msg(msg_PH)
+            sleep(2.5)
+        msg_Time = "Time"
+	choose_msg(msg_Time)
+
 #### 2. Function to send emails ####
 
 def choose_msg(message):
@@ -202,6 +205,9 @@ def choose_msg(message):
         subject = "Pressure is too LOW"
         body = ("Time: %s\n\nPressure is too LOW. Assistance is needed!" %time.strftime("%H:%M:%S"))  
 
+    elif (message == "Time")
+        subject = "Reading taken without Emergency Message"
+        body = ("Time: %s\n\nThis is a file containing the readings from 50 iterations." %time.strftime("%H:%M:%S"))
     else:
         subject = "Emergency message"
         body = "Incorrect message received from 'choose_msg()' function in main.py"
