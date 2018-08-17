@@ -7,7 +7,7 @@ from email import encoders
 
 fromadd = "From Address"
 toadd = "To Address"
-password = "Pasword"
+password = "Password"
 
 def send(subject, body):  
     msg = MIMEMultipart()
